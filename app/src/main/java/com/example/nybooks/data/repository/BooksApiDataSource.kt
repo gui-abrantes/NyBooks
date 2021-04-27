@@ -1,13 +1,15 @@
 package com.example.nybooks.data.repository
 
+import android.content.Context
 import com.example.nybooks.data.ApiService
 import com.example.nybooks.data.BooksResult
 import com.example.nybooks.data.model.Book
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
+import javax.inject.Inject
 
-class BooksApiDataSource : BooksRepository {
+class BooksApiDataSource @Inject constructor() : BooksRepository {
 
     override suspend fun getBooks(): BooksResult {
         return withContext(Dispatchers.Default) {

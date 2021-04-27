@@ -8,10 +8,11 @@ import com.example.nybooks.data.BooksResult
 import com.example.nybooks.data.model.Book
 import com.example.nybooks.data.repository.BooksRepository
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 
 @Suppress("UNCHECKED_CAST")
-class BooksViewModel (val dataSource: BooksRepository) : ViewModel() {
+class BooksViewModel @Inject constructor (val dataSource: BooksRepository) : ViewModel() {
 
     val booksLiveData: MutableLiveData<List<Book>> = MutableLiveData()
     val viewFlipperLiveData: MutableLiveData<Pair<Int,Int?>> = MutableLiveData()
@@ -39,15 +40,6 @@ class BooksViewModel (val dataSource: BooksRepository) : ViewModel() {
                 }
             }
 
-        }
-    }
-
-    class ViewModelFactory(val dataSource: BooksRepository) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(BooksViewModel::class.java)) {
-                return BooksViewModel(dataSource) as T
-            }
-            throw IllegalArgumentException("Unknow ViewModel class")
         }
     }
 
