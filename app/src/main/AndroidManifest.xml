@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".NyBooks"
         android:theme="@style/Theme.NyBooks"
         android:fullBackupContent="@xml/backup_descriptor"
         tools:ignore="AllowBackup">
