@@ -3,16 +3,18 @@ package com.example.nybooks.data.repository
 import com.example.nybooks.data.ApiService
 import com.example.nybooks.data.BooksResult
 import com.example.nybooks.data.model.Book
-import com.example.nybooks.data.response.BookBodyResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class BooksApiDataSource : BooksRepository {
 
-    override fun getBooks(booksResultCallback: (result: BooksResult) -> Unit) {
-        ApiService.service.getlBooks().enqueue(object: Callback<BookBodyResponse> {
-            override fun onResponse(call: Call<BookBodyResponse>, response: Response<BookBodyResponse>) {
+    override suspend fun getBooks(): BooksResult {
+        return withContext(Dispatchers.Default) {
+            lateinit var bookResult: BooksResult
+
+            try {
+                val response = ApiService.service.getBooks().execute()
                 when {
                     response.isSuccessful -> {
                         val books: MutableList<Book> = mutableListOf()
@@ -25,15 +27,16 @@ class BooksApiDataSource : BooksRepository {
                             }
                         }
 
-                        booksResultCallback(BooksResult.Success(books))
+                        bookResult = BooksResult.Success(books)
                     }
-                    else -> booksResultCallback(BooksResult.ApiError(response.code()))
+                    else -> bookResult = BooksResult.ApiError(response.code())
                 }
+
+            } catch (e: Exception) {
+                bookResult = BooksResult.ServerError
             }
 
-            override fun onFailure(call: Call<BookBodyResponse>, t: Throwable) {
-                booksResultCallback(BooksResult.ServerError)
-            }
-        })
+            bookResult
+        }
     }
 }

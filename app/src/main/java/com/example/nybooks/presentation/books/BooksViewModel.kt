@@ -7,7 +7,7 @@ import com.example.nybooks.R
 import com.example.nybooks.data.BooksResult
 import com.example.nybooks.data.model.Book
 import com.example.nybooks.data.repository.BooksRepository
-import java.lang.IllegalArgumentException
+import kotlinx.coroutines.*
 
 
 @Suppress("UNCHECKED_CAST")
@@ -17,7 +17,11 @@ class BooksViewModel (val dataSource: BooksRepository) : ViewModel() {
     val viewFlipperLiveData: MutableLiveData<Pair<Int,Int?>> = MutableLiveData()
 
     fun getBooks() {
-        dataSource.getBooks {result ->
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = withContext(Dispatchers.Default) {
+                dataSource.getBooks()
+            }
+
             when(result){
                 is BooksResult.Success -> {
                     booksLiveData.value = result.books
@@ -34,6 +38,7 @@ class BooksViewModel (val dataSource: BooksRepository) : ViewModel() {
                     viewFlipperLiveData.value = Pair(VIEW_FLIPPER_ERROR, R.string.books_error_500_generic)
                 }
             }
+
         }
     }
 
